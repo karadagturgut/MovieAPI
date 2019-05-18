@@ -2,11 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 //Models
-const MovieModel = require('../models/Movie')
+const DirectorModel = require('../models/Director')
+
+//GETs
 
 // getall
 router.get('/', (req, res, next) =>{
-  const promise= MovieModel.find({});
+  const promise= DirectorModel.find({});
   promise.then((data)=>{
     res.json(data);
   }).catch((err)=>{
@@ -16,7 +18,7 @@ router.get('/', (req, res, next) =>{
 
 // top10
 router.get('/top10', (req, res, next) =>{
-  const promise= MovieModel.find({}).limit(10).sort({imdb_score:1});
+  const promise= DirectorModel.find({}).limit(10).sort({imdb_score:1});
   promise.then((data)=>{
     res.json(data);
   }).catch((err)=>{
@@ -25,27 +27,27 @@ router.get('/top10', (req, res, next) =>{
   });
 
 //findbyid
-router.get('/:movie_id', (req, res,next) => {
-const promise = MovieModel.findById(req.params.movie_id);
+router.get('/:director_id', (req, res,next) => {
+const promise = DirectorModel.findById(req.params.movie_id);
 
 promise.then((movie)=>{
   if(!movie)
-  next({message:'The movie was not found' , code:1});
+  next({message:'The director was not found' , code:1});
   res.json(movie);
 }).catch((err)=>{
   res.json(err)
 });
 });
 
-
+//DELETEs
 
 //deletebyid
-router.delete('/:movie_id', (req, res,next) => {
-const promise = MovieModel.findByIdAndRemove(req.params.movie_id);
+router.delete('/:director_id', (req, res,next) => {
+const promise = DirectorModel.findByIdAndRemove(req.params.movie_id);
     
     promise.then((movie)=>{
       if(!movie)
-      next({message:'The movie was not found' , code:1});
+      next({message:'The director was not found' , code:1});
   
       res.json({status:1});
     }).catch((err)=>{
@@ -53,10 +55,12 @@ const promise = MovieModel.findByIdAndRemove(req.params.movie_id);
     });
     });
 
+    //POSTs
+
     
  // create new one   
 router.post('/', (req, res, next) =>{
-const Movie = new MovieModel(req.body);
+const Movie = new DirectorModel(req.body);
  const promise = Movie.save(); 
 
 promise.then((data)=>{
@@ -67,12 +71,12 @@ res.json({status:1});
   });
 
   //updatebyid
-router.put('/:movie_id', (req, res,next) => {
-  const promise = MovieModel.findByIdAndUpdate(req.params.movie_id,req.body,{new:true});
+router.put('/:director_id', (req, res,next) => {
+  const promise = DirectorModel.findByIdAndUpdate(req.params.movie_id,req.body,{new:true});
   
   promise.then((movie)=>{
     if(!movie)
-    next({message:'The movie was not found' , code:1});
+    next({message:'The director was not found' , code:1});
 
     res.json(movie);
   }).catch((err)=>{
