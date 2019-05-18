@@ -5,36 +5,34 @@ var router = express.Router();
 const MovieModel = require('../models/Movie')
 
 router.get('/', (req, res, next) =>{
-    res.json('respond with a resource');
+  const promise= MovieModel.find({});
+  promise.then((data)=>{
+    res.json(data);
+  }).catch((err)=>{
+    res.json(err)
+  })
   });
+router.get('/:movie_id', (req, res,next) => {
+const promise = MovieModel.findById(req.params.movie_id);
+
+promise.then((movie)=>{
+  if(!movie)
+  next({message:'The movie was not found' , code:1});
+  res.json(movie);
+}).catch((err)=>{
+  res.json(err)
+});
+});
 
 router.post('/', (req, res, next) =>{
-   /*const {title,imdb_score,category,country,year} = req.body;
- 
-   const Movie=new MovieModel({
-    title:title,
-    imdb_score:imdb_score,
-    category:category,
-    country:country,
-    year:year
+const Movie = new MovieModel(req.body);
+ const promise = Movie.save(); 
 
-  }); 
-  
-  Movie.save((err,data)=>{
-    if(err)
-    console.log("Something went wrong. Here is error:",err)
-    
-    res.json(data);
-
-  })*/
-  const Movie = new MovieModel(req.body);
-  Movie.save((err,data)=>{
-    if(err)
-    console.log("Something went wrong. Here is error:",err)
-    
-    res.json(data);
-
-  })
-});
+promise.then((data)=>{
+res.json({status:1});
+}).catch((err)=>{
+  res.json(err)
+}) 
+  });
 
 module.exports = router;
