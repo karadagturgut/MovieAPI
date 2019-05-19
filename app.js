@@ -14,9 +14,18 @@ var app = express();
 
 const db = require('../movieAPI/helper/db')();
 
+// config
+const config = require('./config')
+app.set('api_secret_key',config.api_secret_key);
+
+//token-middleware
+const verifyToken = require('./middleware/verify-token') ;
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -24,7 +33,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//routes
 app.use('/', indexRouter);
+app.use('/api',verifyToken);
 app.use('/api/movie', movieRouter);
 app.use('/api/director', directorRouter);
 
